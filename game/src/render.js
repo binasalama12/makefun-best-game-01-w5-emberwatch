@@ -586,7 +586,7 @@ function drawPlayHud(ctx, s) {
   }
 
   // Left panel: the watch — chain combo, light radius, campers.
-  panel(ctx, 14, 108, 218, 196);
+  panel(ctx, 14, 108, 218, 208);
   text(ctx, 'THE WATCH', 28, 130, 12, '#b9a8e8', 'left', true);
   const mult = (1 + 0.25 * s.chain).toFixed(2);
   text(ctx, `NO-DAMAGE CHAIN ×${s.chain}`, 28, 154, 14.5, s.chain > 0 ? '#ffd76a' : '#cfd6dd', 'left', true);
@@ -596,7 +596,7 @@ function drawPlayHud(ctx, s) {
   text(ctx, `${Math.round(fireRadiusOf(s))} paces of safe light`, 28, 226, 11.5, '#cfd6dd');
   text(ctx, 'LOST CAMPERS', 28, 250, 10.5, '#b9a8e8', 'left', true);
   s.world.campers.forEach((cm, i) => {
-    text(ctx, `${cm.rescued ? '✓' : '✗'} ${cm.name}`, 28, 268 + i * 14, 11.5, cm.rescued ? '#a5e86b' : '#e0b8b8');
+    text(ctx, `${cm.rescued ? '✓' : '✗'} ${cm.name}`, 28, 267 + i * 13, 11.5, cm.rescued ? '#a5e86b' : '#e0b8b8');
   });
 
   // Right panel: tonight's muster / what is still out there + blessings.
@@ -639,7 +639,7 @@ function drawPlayHud(ctx, s) {
 function drawCraftBar(ctx, s) {
   const w = 152, h = 64, gap = 8, total = w * 6 + gap * 5;
   const x0 = (VIEW_W - total) / 2, y0 = VIEW_H - h - 10;
-  text(ctx, 'CRAFT — KEYS 1–6', 640, y0 - 8, 11, '#b9a8e8', 'center', true);
+  text(ctx, 'CRAFT — KEYS 1–6', x0 + total, y0 - 8, 11, '#b9a8e8', 'right', true);
   CRAFTS.forEach((c, i) => {
     const x = x0 + i * (w + gap);
     const afford = Object.entries(c.cost).every(([k, v]) => s.inv[k] >= v);
@@ -659,8 +659,9 @@ function drawBanner(ctx, s) {
   ctx.save();
   ctx.globalAlpha = a;
   const w = Math.max(420, b.text.length * 11.5);
-  panel(ctx, 640 - w / 2, 128, w, 46, 'rgba(12,10,4,0.82)', 'rgba(255,180,80,0.6)');
-  text(ctx, b.text, 640, 157, 17, '#ffd76a', 'center', true);
+  const y0 = s.boss ? 142 : 128;   // keep clear of the boss bar above
+  panel(ctx, 640 - w / 2, y0, w, 46, 'rgba(12,10,4,0.82)', 'rgba(255,180,80,0.6)');
+  text(ctx, b.text, 640, y0 + 29, 17, '#ffd76a', 'center', true);
   ctx.restore();
 }
 
@@ -728,11 +729,11 @@ function drawTitle(ctx, s) {
     'Rescue the 4 lost campers (E beside them). Each dawn: draft 1 of 3',
     'blessings. Survive to the dawn of night 9 — the Warden walks then.',
   ];
-  how.forEach((line, i) => text(ctx, line, 56, 240 + i * 19, 12.5, '#e8e2d0'));
-  text(ctx, 'THE SIX CRAFTS', 56, 386, 13, '#ffd76a', 'left', true);
+  how.forEach((line, i) => text(ctx, line, 56, 240 + i * 18, 12.5, '#e8e2d0'));
+  text(ctx, 'THE SIX CRAFTS', 56, 404, 13, '#ffd76a', 'left', true);
   CRAFTS.forEach((c, i) => {
     const cost = Object.entries(c.cost).map(([k, v]) => `${v} ${k}`).join(' + ');
-    text(ctx, `${c.key} ${c.name} — ${cost}`, 56, 408 + i * 17, 12, '#cfd6dd');
+    text(ctx, `${c.key} ${c.name} — ${cost}`, 56, 424 + i * 16, 12, '#cfd6dd');
   });
 
   // Right: the bestiary.

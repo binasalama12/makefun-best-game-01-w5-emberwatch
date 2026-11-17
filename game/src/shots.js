@@ -61,7 +61,7 @@ export function setupShotScene(state, api) {
     s.night = 9;
     s.phase = 'night';
     s.phaseT = 41;
-    s.fire.fuel = 23;                       // the fire is low — that is the point
+    s.fire.fuel = 32;                       // the fire is low — that is the point
     s.score = 47850;
     s.chain = 3; s.bestChain = 5;
     s.kills = 104; s.gathered = 296; s.crafted = 24;
@@ -75,20 +75,22 @@ export function setupShotScene(state, api) {
     s.player.swingT = 0.45;
     dressCamp(s);
     campersHome(s, 3);
-    // The Warden, hurt and closing on the flame, with its court around it.
-    const boss = api.spawnCreature('boss', CAMP.x + 208, CAMP.y - 128);
+    // The Warden, hurt and closing on the flame, with its court around it —
+    // staged inside the low fire's light (radius ~136 at fuel 32) so the
+    // climax actually reads: boss at the light's edge, court pressing in.
+    const boss = api.spawnCreature('boss', CAMP.x + 112, CAMP.y - 62);
     boss.hp = boss.maxHp * 0.55;
-    api.spawnCreature('stag', CAMP.x + 268, CAMP.y + 60);
-    api.spawnCreature('nightjar', CAMP.x - 210, CAMP.y - 150);
-    api.spawnCreature('nightjar', CAMP.x + 60, CAMP.y - 238);
-    api.spawnCreature('barkhound', CAMP.x - 168, CAMP.y + 128);
-    api.spawnCreature('sporecap', CAMP.x + 300, CAMP.y - 196);
-    api.spawnCreature('twigling', CAMP.x - 262, CAMP.y - 40);
-    api.spawnCreature('twigling', CAMP.x + 130, CAMP.y + 196);
-    api.spawnCreature('emberthief', CAMP.x - 84, CAMP.y - 196);
+    api.spawnCreature('stag', CAMP.x + 168, CAMP.y + 74);
+    api.spawnCreature('nightjar', CAMP.x - 96, CAMP.y - 118);
+    api.spawnCreature('nightjar', CAMP.x + 16, CAMP.y - 132);
+    api.spawnCreature('barkhound', CAMP.x - 138, CAMP.y + 66);
+    api.spawnCreature('sporecap', CAMP.x + 178, CAMP.y - 108);
+    api.spawnCreature('twigling', CAMP.x - 158, CAMP.y - 34);
+    api.spawnCreature('twigling', CAMP.x + 84, CAMP.y + 142);
+    api.spawnCreature('emberthief', CAMP.x - 58, CAMP.y - 148);
     s.waveQueue = ['twigling', 'twigling', 'barkhound', 'nightjar', 'stag', 'splinter'];
     api.showBanner('NIGHT 9 — THE THICKET WARDEN COMES FOR THE FLAME', 30);
-    api.addFloater(CAMP.x + 150, CAMP.y - 90, '−34', '#fff2cf', 16);
+    api.addFloater(CAMP.x + 118, CAMP.y - 118, '−34', '#fff2cf', 16);
     api.addFloater(CAMP.x + 40, CAMP.y + 30, '+150', '#ffd76a', 16);
     api.addFloater(CAMP.x - 120, CAMP.y + 90, 'SNARED!', '#ffd76a', 14);
     const msg = document.getElementById('msg');
