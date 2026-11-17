@@ -42,6 +42,7 @@ export const state = {
   blessings: [],
   draftOptions: [], draftsPending: 0,
   waveQueue: [], spawnT: 0, spawnedAll: false,
+  duskWarned: false,
   stats: null,
   time: 0, rng: makeRng(7),
   paused: false, victory: false, loseReason: '',
@@ -92,6 +93,7 @@ export function startRun(seed) {
   s.chain = 0; s.bestChain = 0; s.tookDamage = false;
   s.blessings = []; s.draftOptions = []; s.draftsPending = 0;
   s.waveQueue = []; s.spawnedAll = false;
+  s.duskWarned = false;
   s.stats = newStats();
   s.victory = false; s.loseReason = ''; s.paused = false;
   s.mode = 'play';
@@ -211,6 +213,7 @@ export function applyBlessing(b) {
   s.night += 1;
   s.phase = 'day';
   s.phaseT = diff().day;
+  s.duskWarned = false;
   showBanner(`DAY ${s.night} — BUILD BEFORE DARK`, 2.6);
   setMsg('The forest regrows its berries at dawn. Tonight will be worse — check the muster panel.');
 }
@@ -684,8 +687,14 @@ function update(dt) {
     if (r.t > 0.4 && Math.hypot(p.x - r.x, p.y - r.y) < r.r) { p.hp -= 10 * dt; s.tookDamage = true; if (p.hp <= 0) { p.hp = 0; endRun(false); s.loseReason = 'The Warden\'s roots held you for the wood.'; return; } }
   }
 
-  // Phase clock.
+  // Phase clock. The last ten seconds of day are telegraphed — a warning
+  // banner and dusk sfx — so dusk never ambushes a keeper mid-chop.
   s.phaseT -= dt;
+  if (s.phase === 'day' && !s.duskWarned && s.phaseT <= 10 && s.phaseT > 0) {
+    s.duskWarned = true;
+    showBanner(`DUSK FALLS — NIGHT ${s.night} STIRS IN THE TREES`, 2.8);
+    sfx.dusk();
+  }
   if (s.phase === 'day' && s.phaseT <= 0) startNight();
   else if (s.phase === 'night') {
     // Spawn pulses from the muster queue.

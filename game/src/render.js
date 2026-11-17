@@ -528,7 +528,13 @@ function drawPlayer(ctx, s) {
 function drawDarkness(ctx, s) {
   const night = s.phase === 'night' || s.mode === 'draft' || s.mode === 'end';
   if (!night && s.mode !== 'title') {
-    // Day: only a soft vignette.
+    // Day: a soft vignette — plus, in the day's last 15 seconds, a gathering
+    // dusk that visibly dims the clearing as the phase clock runs out.
+    if (s.mode === 'play' && s.phase === 'day' && s.phaseT < 15) {
+      const k = Math.max(0, Math.min(1, 1 - s.phaseT / 15));
+      ctx.fillStyle = `rgba(6,8,20,${(0.38 * k).toFixed(3)})`;
+      ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+    }
     const v = ctx.createRadialGradient(640, 396, 380, 640, 396, 860);
     v.addColorStop(0, 'rgba(0,0,0,0)');
     v.addColorStop(1, 'rgba(0,0,0,0.30)');
@@ -630,6 +636,17 @@ function drawPlayHud(ctx, s) {
       by += 17;
     }
     if (s.blessings.length > 7) text(ctx, `…and ${s.blessings.length - 7} more`, 1062, by, 11.5, '#cfd6dd');
+  }
+
+  // Low-fire warning: at fuel 20 or under the screen edges breathe red —
+  // the one number that can end the run should never fail silently.
+  if (s.fire.fuel <= 20 && s.fire.fuel > 0) {
+    const a = 0.10 + 0.07 * Math.sin(s.time * 4.2);
+    const eg = ctx.createRadialGradient(640, 396, 330, 640, 396, 780);
+    eg.addColorStop(0, 'rgba(180,40,10,0)');
+    eg.addColorStop(1, `rgba(180,40,10,${a.toFixed(3)})`);
+    ctx.fillStyle = eg;
+    ctx.fillRect(0, 0, VIEW_W, VIEW_H);
   }
 
   drawCraftBar(ctx, s);
